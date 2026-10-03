@@ -1,0 +1,56 @@
+:root {
+  --primary-accent: #0d6efd;
+  --bg-subtle: #f8f9fa;
+  --card-border-radius: 12px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #212529;
+}
+
+.profile-avatar {
+  width: 170px;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+section.resume-section {
+  padding-top: 2.25rem;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+section.resume-section:last-of-type {
+  border-bottom: none;
+}
+
+.card-custom {
+  border-radius: var(--card-border-radius);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .profile-avatar {
+    width: 130px;
+    height: 130px;
+  }
+
+  section.resume-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
