@@ -2,60 +2,64 @@
 
 {% block content %}
 <article class="card card-custom shadow-sm bg-white p-4 p-md-5">
-  <header class="text-center pb-4 border-bottom">
-    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Андрій Яцишин" class="profile-avatar mb-3">
-    <h1 class="h2 fw-bold mb-1">Андрій Яцишин</h1>
-    <p class="text-secondary fs-6 mb-2">Студент кафедри інформаційних технологій</p>
-    <div class="d-flex justify-content-center gap-2 flex-wrap">
-      <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Карпатський національний університет</span>
-      <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Група ІПЗ-33</span>
+  <header class="d-flex flex-column flex-md-row align-items-center gap-4 pb-4 border-bottom">
+    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Андрій Яцишин" class="profile-avatar flex-shrink-0" width="150" height="150">
+    <div class="text-center text-md-start">
+      <h1 class="h2 fw-bold mb-1">Андрій Яцишин</h1>
+      <p class="text-secondary fs-6 mb-2">Студент кафедри інформаційних технологій</p>
+      <div class="d-flex justify-content-center justify-content-md-start gap-2 flex-wrap">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">Карпатський національний університет</span>
+        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">Група ІПЗ-33</span>
+      </div>
     </div>
   </header>
 
   <section id="about" class="resume-section">
-    <h3 class="h4 fw-bold text-primary mb-3">
+    <h3 class="h5 fw-bold text-primary mb-3">
       <i class="bi bi-person-fill me-2"></i>Про себе
     </h3>
-    <p class="text-secondary mb-0">
-      Здобуваю освіту за спеціальністю «Інженерія програмного забезпечення». Спеціалізуюся на бекенд-розробці, реляційних базах даних та проєктуванні вбудованих систем. Зацікавлений у створенні надійних веб-сервісів і масштабованих архітектурних рішень.
+    <p class="text-secondary mb-0 leading-relaxed">
+      Здобуваю вищу освіту за спеціальністю «Інженерія програмного забезпечення». Спеціалізуюся на бекенд-архітектурі, реляційних базах даних та проєктуванні систем на C++ і Python. Орієнтований на розробку відмовостійких рішень, чистий код і безперервне вдосконалення інженерних навичок.
     </p>
   </section>
 
   <section id="education" class="resume-section">
-    <h3 class="h4 fw-bold text-primary mb-3">
+    <h3 class="h5 fw-bold text-primary mb-3">
       <i class="bi bi-mortarboard-fill me-2"></i>Освіта
     </h3>
-    <div class="card card-custom bg-light border-0 p-3">
-      <div class="d-flex justify-content-between align-items-baseline flex-wrap">
-        <h5 class="fw-semibold mb-1">Карпатський національний університет імені Василя Стефаника</h5>
+    <div class="card-custom bg-light p-3">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <h6 class="fw-bold mb-1">Карпатський національний університет імені Василя Стефаника</h6>
+          <p class="text-secondary small mb-0">Факультет математики та інформатики &bull; Спеціальність 121 «Інженерія програмного забезпечення»</p>
+        </div>
         <span class="badge bg-white text-dark border">2024 — теперішній час</span>
       </div>
-      <p class="text-secondary mb-0">Факультет математики та інформатики &bull; Спеціальність 121 «Інженерія програмного забезпечення»</p>
     </div>
   </section>
 
   <section id="skills" class="resume-section">
-    <h3 class="h4 fw-bold text-primary mb-3">
+    <h3 class="h5 fw-bold text-primary mb-3">
       <i class="bi bi-tools me-2"></i>Навички
     </h3>
     <div class="row g-3">
       <div class="col-md-6">
-        <div class="card card-custom h-100 p-3 bg-light border-0">
-          <h6 class="fw-bold mb-2">Програмні компетенції</h6>
-          <ul class="mb-0 text-secondary ps-3">
-            <li>Об'єктно-орієнтоване проєктування</li>
-            <li>Розробка RESTful API та маршрутизація</li>
-            <li>Моделювання та адміністрування баз даних</li>
+        <div class="card-custom h-100 p-3 bg-light">
+          <h6 class="fw-bold mb-2"><i class="bi bi-code-slash text-primary me-2"></i>Програмні компетенції</h6>
+          <ul class="mb-0 text-secondary small ps-3">
+            <li>Об'єктно-орієнтоване проєктування та шаблони проектування</li>
+            <li>Розробка RESTful API, мікросервісів та Web-інтерфейсів</li>
+            <li>Проєктування схем реляційних БД, оптимізація запитів</li>
           </ul>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="card card-custom h-100 p-3 bg-light border-0">
-          <h6 class="fw-bold mb-2">Інженерні інструменти</h6>
-          <ul class="mb-0 text-secondary ps-3">
-            <li>Робота в Linux (Fedora, CLI, Bash)</li>
-            <li>Контроль версій Git та репозиторії GitHub</li>
-            <li>Контейнеризація та розгортання в Docker</li>
+        <div class="card-custom h-100 p-3 bg-light">
+          <h6 class="fw-bold mb-2"><i class="bi bi-terminal text-primary me-2"></i>Інженерні інструменти</h6>
+          <ul class="mb-0 text-secondary small ps-3">
+            <li>Робота в середовищі Linux (Fedora, CLI, Bash automation)</li>
+            <li>Контроль версій Git, Git Flow, платформи GitHub/GitLab</li>
+            <li>Контейнеризація в Docker та базове адміністрування</li>
           </ul>
         </div>
       </div>
@@ -63,40 +67,40 @@
   </section>
 
   <section id="technologies" class="resume-section">
-    <h3 class="h4 fw-bold text-primary mb-3">
+    <h3 class="h5 fw-bold text-primary mb-3">
       <i class="bi bi-cpu-fill me-2"></i>Технології
     </h3>
     <div class="d-flex flex-wrap gap-2">
-      <span class="badge bg-dark py-2 px-3">Python (Flask, FastAPI)</span>
-      <span class="badge bg-dark py-2 px-3">C++ (Qt)</span>
-      <span class="badge bg-dark py-2 px-3">Java (JavaFX)</span>
-      <span class="badge bg-dark py-2 px-3">MS SQL Server & SQLite</span>
-      <span class="badge bg-dark py-2 px-3">Bootstrap 5 & Jinja2</span>
-      <span class="badge bg-dark py-2 px-3">Git & Docker</span>
+      <span class="badge bg-dark skill-badge">Python (Flask, FastAPI)</span>
+      <span class="badge bg-dark skill-badge">C++ (Qt, Embedded)</span>
+      <span class="badge bg-dark skill-badge">Java (JavaFX)</span>
+      <span class="badge bg-dark skill-badge">MS SQL Server & SQLite</span>
+      <span class="badge bg-dark skill-badge">Bootstrap 5 & Jinja2</span>
+      <span class="badge bg-dark skill-badge">Git & Docker</span>
     </div>
   </section>
 
   <section id="projects" class="resume-section">
-    <h3 class="h4 fw-bold text-primary mb-3">
+    <h3 class="h5 fw-bold text-primary mb-3">
       <i class="bi bi-folder-fill me-2"></i>Досвід роботи та проєкти
     </h3>
     <div class="row g-3">
       <div class="col-12">
-        <div class="card card-custom p-3 border">
-          <div class="d-flex justify-content-between align-items-baseline flex-wrap">
-            <h5 class="fw-semibold mb-1">Logistics Management System</h5>
-            <span class="text-secondary small">MS SQL Server &bull; T-SQL</span>
+        <div class="card-custom p-3 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Logistics Management System</h6>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">MS SQL Server &bull; T-SQL</span>
           </div>
-          <p class="text-muted small mb-0">Реляційна база даних логістичної компанії з використанням системно-версійних темпоральних таблиць та збережених процедур для трекінгу вантажів.</p>
+          <p class="text-secondary small mb-0">Проєктування реляційної бази даних логістичної компанії: збережені процедури, валідація цілісності та використання системно-версійних темпоральних таблиць для аудиту змін.</p>
         </div>
       </div>
       <div class="col-12">
-        <div class="card card-custom p-3 border">
-          <div class="d-flex justify-content-between align-items-baseline flex-wrap">
-            <h5 class="fw-semibold mb-1">Book Diary Application</h5>
-            <span class="text-secondary small">Python &bull; PyQt6 &bull; SQLite</span>
+        <div class="card-custom p-3 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Book Diary Application</h6>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Python &bull; PyQt6 &bull; SQLite</span>
           </div>
-          <p class="text-muted small mb-0">Десктопний застосунок для обліку прочитаних книг з локальним збереженням даних та інтеграцією із зовнішнім каталогом.</p>
+          <p class="text-secondary small mb-0">Десктопний застосунок для каталогізації прочитаної літератури з локальним сховищем SQLite та інтеграцією з REST API Google Books.</p>
         </div>
       </div>
     </div>

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="card shadow-sm border-0 bg-white p-4 p-md-5 rounded-4">
+<section class="card card-custom shadow-sm bg-white p-4 p-md-5">
   <div class="row g-4">
     <div class="col-lg-5">
-      <h2 class="h3 fw-bold mb-3 text-primary">Контактна інформація</h2>
-      <p class="text-secondary mb-4">
-        Маєте запитання або пропозиції щодо співпраці? Заповніть форму або зв'яжіться зі мною через доступні канали.
+      <h2 class="h4 fw-bold mb-3 text-primary">Контактна інформація</h2>
+      <p class="text-secondary mb-4 small">
+        Маєте запитання або пропозиції щодо співпраці? Заповніть форму або скористайтеся наведеними нижче контактами.
       </p>
 
       <div class="d-flex flex-column gap-3">
@@ -45,28 +45,33 @@
     </div>
 
     <div class="col-lg-7">
-      <div class="border rounded-3 p-4 bg-light">
-        <h3 class="h4 fw-bold mb-3">Надіслати повідомлення</h3>
-        <form action="#" method="post" onsubmit="event.preventDefault(); alert('Повідомлення збережено (форма-заглушка)');">
+      <div class="border rounded-4 p-4 bg-light">
+        <h3 class="h5 fw-bold mb-3">Надіслати повідомлення</h3>
+
+        <div id="statusAlert" class="alert alert-success d-none mb-3" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>Повідомлення успішно сформовано (форма-заглушка).
+        </div>
+
+        <form id="contactForm">
           <div class="row g-3">
-            <div class="col-md-6">
-              <label for="name" class="form-label small fw-semibold">Ім'я</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="Ваше ім'я" required>
+            <div class="col-md-6 form-floating">
+              <input type="text" class="form-control" id="name" placeholder="Ім'я" required>
+              <label for="name" class="ps-3">Ваше ім'я</label>
             </div>
-            <div class="col-md-6">
-              <label for="email" class="form-label small fw-semibold">Електронна пошта</label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+            <div class="col-md-6 form-floating">
+              <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+              <label for="email" class="ps-3">Електронна пошта</label>
+            </div>
+            <div class="col-12 form-floating">
+              <input type="text" class="form-control" id="subject" placeholder="Тема" required>
+              <label for="subject" class="ps-3">Тема повідомлення</label>
+            </div>
+            <div class="col-12 form-floating">
+              <textarea class="form-control" id="message" placeholder="Повідомлення" style="height: 120px" required></textarea>
+              <label for="message" class="ps-3">Текст повідомлення...</label>
             </div>
             <div class="col-12">
-              <label for="subject" class="form-label small fw-semibold">Тема</label>
-              <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема повідомлення" required>
-            </div>
-            <div class="col-12">
-              <label for="message" class="form-label small fw-semibold">Повідомлення</label>
-              <textarea class="form-control" id="message" name="message" rows="4" placeholder="Текст повідомлення..." required></textarea>
-            </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary px-4 py-2 w-100">
+              <button type="submit" class="btn btn-primary px-4 py-2 w-100 fw-medium">
                 <i class="bi bi-send me-1"></i> Надіслати
               </button>
             </div>
@@ -76,4 +81,14 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.getElementById('statusAlert').classList.remove('d-none');
+    this.reset();
+  });
+</script>
 {% endblock %}

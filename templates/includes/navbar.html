@@ -11,9 +11,9 @@
       </button>
 
       <div class="collapse navbar-collapse" id="mainNavbar">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('resume') }}">Головна</a>
+            <a class="nav-link {% if request.endpoint == 'resume' %}active fw-semibold{% endif %}" href="{{ url_for('resume') }}">Резюме</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('resume') }}#about">Про себе</a>
@@ -28,7 +28,7 @@
             <a class="nav-link" href="{{ url_for('resume') }}#projects">Проєкти</a>
           </li>
           <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-            <a class="btn btn-outline-light btn-sm px-3 rounded-pill" href="{{ url_for('contacts') }}">Контакти</a>
+            <a class="btn {% if request.endpoint == 'contacts' %}btn-primary{% else %}btn-outline-light{% endif %} btn-sm px-3 rounded-pill" href="{{ url_for('contacts') }}">Контакти</a>
           </li>
         </ul>
       </div>
