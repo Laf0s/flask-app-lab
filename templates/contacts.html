@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card shadow-sm border-0 bg-white p-4 p-md-5 rounded-4">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <h2 class="h3 fw-bold mb-3 text-primary">Контактна інформація</h2>
+      <p class="text-secondary mb-4">
+        Маєте запитання або пропозиції щодо співпраці? Заповніть форму або зв'яжіться зі мною через доступні канали.
+      </p>
+
+      <div class="d-flex flex-column gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-primary-subtle text-primary p-2 rounded-3 fs-5">
+            <i class="bi bi-geo-alt-fill"></i>
+          </div>
+          <div>
+            <div class="text-secondary small">Місто</div>
+            <div class="fw-medium">Івано-Франківськ, Україна</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-primary-subtle text-primary p-2 rounded-3 fs-5">
+            <i class="bi bi-envelope-fill"></i>
+          </div>
+          <div>
+            <div class="text-secondary small">Email</div>
+            <div class="fw-medium">andrii.yatsyshyn.24@pnu.edu.ua</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-primary-subtle text-primary p-2 rounded-3 fs-5">
+            <i class="bi bi-github"></i>
+          </div>
+          <div>
+            <div class="text-secondary small">GitHub</div>
+            <a href="https://github.com/Laf0s" target="_blank" rel="noopener noreferrer" class="fw-medium text-decoration-none">
+              github.com/Laf0s
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="border rounded-3 p-4 bg-light">
+        <h3 class="h4 fw-bold mb-3">Надіслати повідомлення</h3>
+        <form action="#" method="post" onsubmit="event.preventDefault(); alert('Повідомлення збережено (форма-заглушка)');">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label small fw-semibold">Ім'я</label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Ваше ім'я" required>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label small fw-semibold">Електронна пошта</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+            </div>
+            <div class="col-12">
+              <label for="subject" class="form-label small fw-semibold">Тема</label>
+              <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема повідомлення" required>
+            </div>
+            <div class="col-12">
+              <label for="message" class="form-label small fw-semibold">Повідомлення</label>
+              <textarea class="form-control" id="message" name="message" rows="4" placeholder="Текст повідомлення..." required></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary px-4 py-2 w-100">
+                <i class="bi bi-send me-1"></i> Надіслати
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
