@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %} Homepage | Home {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom p-4 shadow-sm text-center">
+            <h2 class="fw-bold text-primary mb-3">Головна сторінка (Homepage)</h2>
+            <p class="fs-5 text-secondary">Інформація про ваш браузер (User-Agent):</p>
+            <div class="alert alert-light border p-3 text-start font-monospace small">
+                {{ agent }}
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('resume') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">Назад до резюме</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
