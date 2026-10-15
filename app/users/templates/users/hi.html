@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Greeting Page | Андрій Яцишин{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <nav class="list-group shadow-sm">
+                <a href="{{ url_for('resume') }}" class="list-group-item list-group-item-action fw-semibold">
+                    FlaskApp (Головна)
+                </a>
+                <a href="{{ url_for('users.greetings', name='John', age=30) }}" class="list-group-item list-group-item-action">
+                    Greet John
+                </a>
+                <a href="{{ url_for('users.admin') }}" class="list-group-item list-group-item-action">
+                    Admin
+                </a>
+            </nav>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card shadow-sm border-0 p-4">
+                <h1 class="display-5 text-secondary mb-3">Hello :)</h1>
+                <h4 class="fw-bold mb-2">User: {{ name }}</h4>
+
+                {% if age %}
+                    <p class="fs-5 text-success mb-0">Age: {{ age }} years old.</p>
+                {% else %}
+                    <p class="fs-5 text-danger mb-0">Age: Not provided</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
