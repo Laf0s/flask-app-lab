@@ -25,7 +25,7 @@ products = [
 
 @products_bp.route("/")
 def list_products():
-    return render_template("products/products.html", products=products)
+    return render_template("products.html", products=products)
 
 
 @products_bp.route("/<int:product_id>")
@@ -33,4 +33,4 @@ def detail_product(product_id):
     product = next((item for item in products if item["id"] == product_id), None)
     if product is None:
         abort(404)
-    return render_template("products/detail_product.html", product=product)
+    return render_template("detail_product.html", product=product)
