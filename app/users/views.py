@@ -36,3 +36,17 @@ def login():
             return redirect(url_for("users.login"))
 
     return render_template("login.html")
+
+@users_bp.route("/profile")
+def profile():
+    if "username" not in session:
+        flash("Доступ заборонено. Будь ласка, авторизуйтесь.", "danger")
+        return redirect(url_for("users.login"))
+
+    return render_template("profile.html", username=session["username"])
+
+@users_bp.route("/logout")
+def logout():
+    session.pop("username", None)
+    flash("Ви вийшли із системи.", "info")
+    return redirect(url_for("users.login"))
