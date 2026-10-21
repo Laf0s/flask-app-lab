@@ -3,7 +3,24 @@
 {% block title %}Профіль | {{ username }}{% endblock %}
 
 {% block content %}
-<div class="mt-2">
+{# Динамічна адаптація контейнера під тему #}
+<div class="card p-4 border-0 shadow-sm rounded-3 {% if theme == 'dark' %}bg-dark text-light border border-secondary{% else %}bg-white text-dark{% endif %}">
+
+  {# Панель вибору кольорової схеми #}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="small fw-semibold">
+      Кольорова схема: <span class="badge {% if theme == 'dark' %}bg-light text-dark{% else %}bg-dark text-light{% endif %}">{{ theme }}</span>
+    </div>
+    <div class="btn-group btn-group-sm" role="group">
+      <a href="{{ url_for('users.set_theme', theme_name='light') }}" class="btn {% if theme == 'light' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+        <i class="bi bi-sun-fill me-1"></i> Світла
+      </a>
+      <a href="{{ url_for('users.set_theme', theme_name='dark') }}" class="btn {% if theme == 'dark' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+        <i class="bi bi-moon-stars-fill me-1"></i> Темна
+      </a>
+    </div>
+  </div>
+
   {# Банер привітання #}
   <div class="p-3 text-white rounded-1 d-flex align-items-center" style="background-color: #0d6efd; font-size: 1.5rem;">
     <span class="fw-normal">Ласкаво просимо до сторінки</span>
@@ -14,13 +31,15 @@
   </div>
 
   <div class="mt-3">
-    <p class="text-secondary small mb-2">Тут ви можете отримати інформацію та вийти з системи.</p>
+    <p class="{% if theme == 'dark' %}text-light-emphasis{% else %}text-secondary{% endif %} small mb-2">
+      Тут ви можете отримати інформацію та вийти з системи.
+    </p>
     <a href="{{ url_for('users.logout') }}" class="btn btn-danger btn-sm px-3">
       Вийти
     </a>
   </div>
 
-  <hr class="my-4">
+  <hr class="my-4 {% if theme == 'dark' %}border-secondary{% endif %}">
 
   {# 1. Форма: Додати кукі #}
   <div class="mb-4">
@@ -28,15 +47,15 @@
     <form method="POST" action="{{ url_for('users.add_cookie') }}">
       <div class="row g-2 align-items-center mb-2">
         <div class="col-md-4">
-          <label class="form-label small text-muted mb-1">Ключ кукі:</label>
+          <label class="form-label small {% if theme == 'dark' %}text-light-emphasis{% else %}text-muted{% endif %} mb-1">Ключ кукі:</label>
           <input type="text" class="form-control form-control-sm" name="key" required>
         </div>
         <div class="col-md-4">
-          <label class="form-label small text-muted mb-1">Значення кукі:</label>
+          <label class="form-label small {% if theme == 'dark' %}text-light-emphasis{% else %}text-muted{% endif %} mb-1">Значення кукі:</label>
           <input type="text" class="form-control form-control-sm" name="val">
         </div>
         <div class="col-md-4">
-          <label class="form-label small text-muted mb-1">Термін дії (сек):</label>
+          <label class="form-label small {% if theme == 'dark' %}text-light-emphasis{% else %}text-muted{% endif %} mb-1">Термін дії (сек):</label>
           <input type="number" class="form-control form-control-sm" name="max_age" placeholder="напр. 3600">
         </div>
       </div>
@@ -51,7 +70,7 @@
     <h5 class="fw-bold mb-2">Видалити кукі за ключем:</h5>
     <form method="POST" action="{{ url_for('users.delete_cookie_by_key') }}">
       <div class="mb-2">
-        <label class="form-label small text-muted mb-1">Ключ кукі для видалення:</label>
+        <label class="form-label small {% if theme == 'dark' %}text-light-emphasis{% else %}text-muted{% endif %} mb-1">Ключ кукі для видалення:</label>
         <input type="text" class="form-control form-control-sm" name="key_to_delete" required>
       </div>
       <button type="submit" class="btn btn-warning btn-sm px-3 text-dark">
@@ -71,11 +90,11 @@
   </div>
 
   {# 4. Таблиця: Список всіх кукі #}
-  <div class="mb-4">
+  <div class="mb-2">
     <h5 class="fw-bold mb-2">Список всіх кукі:</h5>
     <div class="table-responsive">
-      <table class="table table-bordered table-sm align-middle bg-white">
-        <thead class="table-light">
+      <table class="table table-bordered table-sm align-middle {% if theme == 'dark' %}table-dark border-secondary{% else %}bg-white{% endif %}">
+        <thead class="{% if theme == 'dark' %}table-dark{% else %}table-light{% endif %}">
           <tr>
             <th scope="col" style="width: 30%;">Ключ</th>
             <th scope="col">Значення</th>

@@ -43,10 +43,13 @@ def profile():
         flash("Доступ заборонено. Будь ласка, авторизуйтесь.", "danger")
         return redirect(url_for("users.login"))
 
+    current_theme = request.cookies.get("profile_theme", "light")
+
     return render_template(
         "profile.html",
         username=session["username"],
-        cookies=request.cookies
+        cookies=request.cookies,
+        theme=current_theme
     )
 
 @users_bp.route("/logout")
@@ -111,4 +114,14 @@ def delete_all_cookies():
             resp.delete_cookie(key)
 
     flash("Всі користувацькі кукі видалено!", "info")
+    return resp
+
+@users_bp.route("/theme/<string:theme_name>")
+def set_theme(theme_name):
+    allowed_themes = ["light", "dark"]
+    selected = theme_name if theme_name in allowed_themes else "light"
+
+    resp = make_response(redirect(url_for("users.profile")))
+    resp.set_cookie("profile_theme", selected, max_age=60 * 60 * 24 * 30)
+    flash(f"Колірну схему змінено на: {selected}", "secondary")
     return resp
