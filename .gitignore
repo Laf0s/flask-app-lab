@@ -2,3 +2,4 @@
 __pycache__/
 .idea/
 .flaskenv
+contact_messages.log
