@@ -33,13 +33,14 @@ def get_product_by_id(product_id: int):
 
 
 def save_uploaded_image(image_file):
-    if not image_file or not image_file.filename:
+    if not image_file or not hasattr(image_file, "filename") or not image_file.filename:
         return None
-    ext = os.path.splitext(image_file.filename)[1].lower()
-    unique_filename = f"{uuid.uuid4().hex}{ext}"
 
     upload_folder = os.path.join(current_app.root_path, "static", "uploads")
     os.makedirs(upload_folder, exist_ok=True)
+
+    ext = os.path.splitext(image_file.filename)[1].lower()
+    unique_filename = f"{uuid.uuid4().hex}{ext}"
 
     file_path = os.path.join(upload_folder, unique_filename)
     image_file.save(file_path)
@@ -73,9 +74,11 @@ def update_product(product_id: int, data, image_file=None):
         return False
 
     image_rel_path = existing.get("image")
-    new_image = save_uploaded_image(image_file)
-    if new_image:
-        image_rel_path = new_image
+
+    if image_file and hasattr(image_file, "filename") and image_file.filename:
+        new_image = save_uploaded_image(image_file)
+        if new_image:
+            image_rel_path = new_image
 
     db.update({
         "name": data["name"],
