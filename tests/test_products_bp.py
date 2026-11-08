@@ -1,17 +1,42 @@
+import os
 import unittest
+import warnings
+from unittest.mock import patch
 from app import app
 from app.products.repository import get_db, create_product
 
+TEST_DB_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "data", "test_products.json")
+)
+
 
 class ProductBlueprintTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        warnings.filterwarnings("ignore", category=ResourceWarning)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+        cls.patcher = patch("app.products.repository.DB_PATH", TEST_DB_PATH)
+        cls.patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.patcher.stop()
+        if os.path.exists(TEST_DB_PATH):
+            try:
+                os.remove(TEST_DB_PATH)
+            except OSError:
+                pass
 
     def setUp(self):
         app.config["TESTING"] = True
         app.config["WTF_CSRF_ENABLED"] = False
         self.client = app.test_client()
 
-        self.db = get_db()
-        self.db.truncate()
+        db = get_db()
+        db.truncate()
+        db.close()
 
         self.test_product_id = create_product({
             "name": "Ноутбук Lenovo IdeaPad",
@@ -22,7 +47,9 @@ class ProductBlueprintTestCase(unittest.TestCase):
         })
 
     def tearDown(self):
-        self.db.truncate()
+        db = get_db()
+        db.truncate()
+        db.close()
 
     def test_products_list_page(self):
         response = self.client.get("/products/")
