@@ -38,6 +38,10 @@ def create_app(config_name: str = None) -> Flask:
         from .products import products_bp
         app.register_blueprint(products_bp)
 
+        from .posts import post_bp
+        from .posts import models
+        app.register_blueprint(post_bp)
+
         @app.errorhandler(404)
         def not_found(e):
             return render_template("404.html"), 404
