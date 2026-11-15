@@ -1,6 +1,6 @@
 from flask import render_template, abort, redirect, url_for, flash, request
 from . import products_bp
-from app.forms import ProductForm
+from .forms import ProductForm
 from .repository import (
     get_all_products,
     get_product_by_id,

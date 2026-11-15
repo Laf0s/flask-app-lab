@@ -2,7 +2,7 @@ import os
 import unittest
 import warnings
 from unittest.mock import patch
-from app import app
+from app import create_app
 from app.products.repository import get_db, create_product
 
 TEST_DB_PATH = os.path.abspath(
@@ -30,9 +30,8 @@ class ProductBlueprintTestCase(unittest.TestCase):
                 pass
 
     def setUp(self):
-        app.config["TESTING"] = True
-        app.config["WTF_CSRF_ENABLED"] = False
-        self.client = app.test_client()
+        self.app = create_app("test")
+        self.client = self.app.test_client()
 
         db = get_db()
         db.truncate()

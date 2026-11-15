@@ -1,7 +1,8 @@
 import logging
-from flask import request, redirect, url_for, render_template, flash
-from app import app
+from flask import Blueprint, request, redirect, url_for, render_template, flash
 from .forms import ContactForm
+
+main = Blueprint("main", __name__)
 
 logger = logging.getLogger("contact_logger")
 logger.setLevel(logging.INFO)
@@ -11,11 +12,13 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-@app.route('/')
+
+@main.route("/")
 def resume() -> str:
     return render_template('resume.html', title="Резюме | Андрій Яцишин")
 
-@app.route('/contacts', methods=['GET', 'POST'])
+
+@main.route("/contacts", methods=["GET", "POST"])
 def contacts():
     form = ContactForm()
     if form.validate_on_submit():
@@ -30,14 +33,15 @@ def contacts():
         )
 
         flash("Ваше повідомлення успішно надіслано та збережено!", "success")
-        return redirect(url_for('contacts'))
+        return redirect(url_for("main.contacts"))
 
     elif request.method == 'POST':
         flash("Помилка під час відправки форми. Перевірте введені дані.", "danger")
 
     return render_template('contacts.html', title="Контакти | Андрій Яцишин", form=form)
 
-@app.route('/homepage')
+
+@main.route("/homepage")
 def home():
     agent = request.user_agent
     return render_template("homepage.html", agent=agent)

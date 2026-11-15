@@ -49,7 +49,7 @@
       <div class="border rounded-4 p-4 bg-light">
         <h3 class="h5 fw-bold mb-3">Надіслати повідомлення</h3>
 
-        <form method="POST" action="{{ url_for('contacts') }}" novalidate>
+        <form method="POST" action="{{ url_for('main.contacts') }}" novalidate>
           {{ form.hidden_tag() }}
 
           {{ render_field(form.name) }}
