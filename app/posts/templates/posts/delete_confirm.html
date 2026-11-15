@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Підтвердження видалення{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 600px;">
+    <div class="card border-danger shadow-sm p-4">
+        <h3 class="text-danger mb-3">Підтвердження видалення</h3>
+        <p>Ви дійсно хочете видалити пост <strong>"{{ post.title }}"</strong>?</p>
+        <form method="POST" class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-danger">Так, видалити</button>
+            <a href="{{ url_for('posts.detail_post', id=post.id) }}" class="btn btn-secondary">Скасувати</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
