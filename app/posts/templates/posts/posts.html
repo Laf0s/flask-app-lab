@@ -1,30 +1,73 @@
 {% extends "base.html" %}
-{% block title %}Публікації{% endblock %}
+
+{% block title %}Публікації | Андрій Яцишин{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('.static', filename='css/posts.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Публікації</h2>
-        <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary">+ Додати пост</a>
-    </div>
-    <div class="row g-4">
-        {% for post in posts %}
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <span class="badge bg-secondary align-self-start mb-2">{{ post.category }}</span>
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text text-muted small">{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
-                    <div class="mt-auto pt-2">
-                        <small class="text-muted d-block mb-2">{{ post.posted.strftime('%Y-%m-%d %H:%M') if post.posted else '' }}</small>
-                        <a href="{{ url_for('posts.detail_post', id=post.id) }}" class="btn btn-outline-primary btn-sm">Читати далі</a>
-                    </div>
-                </div>
-            </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center posts-header gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">Публікації та статті</h2>
+            <p class="text-muted mb-0 small">Новини, нотатки з розробки та технічні матеріали</p>
         </div>
-        {% else %}
-        <p class="text-muted">Публікацій поки немає.</p>
-        {% endfor %}
+        <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add Post
+        </a>
     </div>
+
+    {% set category_labels = {
+        'news': 'Новини',
+        'publication': 'Публікація',
+        'tech': 'Технології',
+        'other': 'Інше'
+    } %}
+
+    {% if not posts %}
+        <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+            <h5 class="text-secondary fw-normal mb-3">Активних публікацій поки немає</h5>
+            <a href="{{ url_for('posts.create_post') }}" class="btn btn-outline-primary rounded-pill px-4">
+                Створити перший пост
+            </a>
+        </div>
+    {% else %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for post in posts %}
+            <div class="col">
+                <article class="card h-100 shadow-sm post-card d-flex flex-column">
+                    <div class="post-card-img-wrapper">
+                        <img src="{{ url_for('.static', filename='img/default.jpg') }}"
+                             class="post-card-img"
+                             alt="{{ post.title }}">
+                        <span class="post-category-badge">
+                            {{ category_labels.get(post.category, post.category) }}
+                        </span>
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="post-meta mb-2 d-flex justify-content-between">
+                            <span><i class="bi bi-person me-1"></i>{{ post.author }}</span>
+                            <span><i class="bi bi-calendar3 me-1"></i>{{ post.posted.strftime('%d.%m.%Y %H:%M') if post.posted else '' }}</span>
+                        </div>
+
+                        <h5 class="card-title fw-bold text-dark mb-2">{{ post.title }}</h5>
+                        <p class="card-text text-secondary small mb-3">
+                            {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
+                        </p>
+
+                        <div class="mt-auto pt-2">
+                            <a href="{{ url_for('posts.detail_post', id=post.id) }}"
+                               class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100">
+                                Переглянути пост
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

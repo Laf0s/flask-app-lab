@@ -19,6 +19,9 @@
             <a class="nav-link {% if request.endpoint == 'resume' %}active fw-semibold{% endif %}" href="{{ url_for('main.resume') }}">Резюме</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'posts.list_posts' %}active fw-semibold{% endif %}" href="{{ url_for('posts.list_posts') }}">Пости</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'products.list_products' %}active fw-semibold{% endif %}" href="{{ url_for('products.list_products') }}">Продукти</a>
           </li>
           <li class="nav-item">
