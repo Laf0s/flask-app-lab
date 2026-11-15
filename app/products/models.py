@@ -1,6 +1,22 @@
-from sqlalchemy import Integer, String, Float
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, Float, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app import db
+
+
+class Category(db.Model):
+    __tablename__ = "categories"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
+
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
+        back_populates="category",
+        lazy="select"
+    )
+
+    def __repr__(self) -> str:
+        return f"<Category {self.name}>"
 
 
 class Product(db.Model):
@@ -9,6 +25,9 @@ class Product(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
+
+    category_id: Mapped[int | None] = mapped_column(ForeignKey("categories.id"))
+    category: Mapped["Category"] = relationship("Category", back_populates="products")
 
     def __repr__(self) -> str:
         return f"<Product {self.name} ${self.price}>"
