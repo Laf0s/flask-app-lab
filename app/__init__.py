@@ -23,7 +23,7 @@ def create_app(config_name: str = None) -> Flask:
 
     app = Flask(__name__)
     app.config.from_object(config_map[config_name])
-    print(f"Running in config: {config_name}")
+    # print(f"Running in config: {config_name}")
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -36,6 +36,7 @@ def create_app(config_name: str = None) -> Flask:
         app.register_blueprint(users_bp)
 
         from .products import products_bp
+        from .products import models as product_models
         app.register_blueprint(products_bp)
 
         from .posts import post_bp
@@ -46,9 +47,9 @@ def create_app(config_name: str = None) -> Flask:
         def not_found(e):
             return render_template("404.html"), 404
 
-        if config_name == "test":
-            print("Registered routes:")
-            for rule in app.url_map.iter_rules():
-                print(rule)
+        # if config_name == "test":
+        #     print("Registered routes:")
+        #     for rule in app.url_map.iter_rules():
+        #         print(rule)
 
     return app
