@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from app import db
 from app.users.models import User
 from . import post_bp
-from .models import Post
+from .models import Post, Tag
 from .forms import PostForm
 
 
@@ -23,14 +23,23 @@ def create_post():
     authors = db.session.scalars(db.select(User).order_by(User.id)).all()
     form.author_id.choices = [(author.id, author.username) for author in authors]
 
+    all_tags = db.session.scalars(db.select(Tag).order_by(Tag.id)).all()
+    form.tags.choices = [(tag.id, tag.name) for tag in all_tags]
+
     if form.validate_on_submit():
+        selected_tags = (
+            db.session.scalars(db.select(Tag).where(Tag.id.in_(form.tags.data))).all()
+            if form.tags.data
+            else []
+        )
         new_post = Post(
             title=form.title.data.strip(),
             content=form.content.data.strip(),
             is_active=form.is_active.data,
             posted=form.publish_date.data,
             category=form.category.data,
-            user_id=form.author_id.data
+            user_id=form.author_id.data,
+            tags=selected_tags
         )
         db.session.add(new_post)
         db.session.commit()
@@ -55,9 +64,13 @@ def update_post(id: int):
     authors = db.session.scalars(db.select(User).order_by(User.id)).all()
     form.author_id.choices = [(author.id, author.username) for author in authors]
 
+    all_tags = db.session.scalars(db.select(Tag).order_by(Tag.id)).all()
+    form.tags.choices = [(tag.id, tag.name) for tag in all_tags]
+
     if request.method == "GET":
         form.publish_date.data = post.posted
         form.author_id.data = post.user_id
+        form.tags.data = [tag.id for tag in post.tags]
 
     if form.validate_on_submit():
         post.title = form.title.data.strip()
@@ -67,6 +80,11 @@ def update_post(id: int):
         post.user_id = form.author_id.data
         if form.publish_date.data:
             post.posted = form.publish_date.data
+        post.tags = (
+            db.session.scalars(db.select(Tag).where(Tag.id.in_(form.tags.data))).all()
+            if form.tags.data
+            else []
+        )
         db.session.commit()
         flash("Пост оновлено!", "success")
         return redirect(url_for("posts.detail_post", id=post.id))

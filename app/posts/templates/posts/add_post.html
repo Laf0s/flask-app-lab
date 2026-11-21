@@ -24,6 +24,7 @@
             </div>
 
             {{ render_field(form.author_id, class="form-select") }}
+            {{ render_field(form.tags, class="form-select") }}
 
             <div class="form-check form-switch my-3">
                 {{ form.is_active(class="form-check-input", role="switch") }}

@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, BooleanField, DateTimeLocalField, SelectField, SubmitField
+from wtforms import StringField, TextAreaField, BooleanField, DateTimeLocalField, SelectField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired, Length
 
 CATEGORY_CHOICES = [
@@ -40,5 +40,10 @@ class PostForm(FlaskForm):
         "Автор",
         coerce=int,
         validators=[DataRequired(message="Оберіть автора.")]
+    )
+    tags = SelectMultipleField(
+        "Теги",
+        coerce=int,
+        render_kw={"size": 4}
     )
     submit = SubmitField("Зберегти пост")
