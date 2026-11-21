@@ -1,7 +1,11 @@
 from datetime import datetime, timezone
-from sqlalchemy import Integer, String, Text, DateTime, Enum, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import TYPE_CHECKING
+from sqlalchemy import Integer, String, Text, DateTime, Enum, Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app import db
+
+if TYPE_CHECKING:
+    from app.users.models import User
 
 POST_CATEGORIES = ("news", "publication", "tech", "other")
 
@@ -21,7 +25,9 @@ class Post(db.Model):
         default="other"
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    author: Mapped[str] = mapped_column(String(20), default="Anonymous", nullable=False)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="posts")
 
     def __repr__(self) -> str:
         return f"<Post(id={self.id}, title={self.title!r}, category={self.category!r})>"
