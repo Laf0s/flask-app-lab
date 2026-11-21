@@ -40,6 +40,7 @@ def create_app(config_name: str = None) -> Flask:
         app.register_blueprint(main_blueprint)
 
         from .users import users_bp
+        from .users import models as user_models
         app.register_blueprint(users_bp)
 
         from .products import products_bp
