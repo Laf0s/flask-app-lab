@@ -36,4 +36,9 @@ class PostForm(FlaskForm):
         choices=CATEGORY_CHOICES,
         validators=[DataRequired(message="Оберіть категорію.")]
     )
+    author_id = SelectField(
+        "Автор",
+        coerce=int,
+        validators=[DataRequired(message="Оберіть автора.")]
+    )
     submit = SubmitField("Зберегти пост")

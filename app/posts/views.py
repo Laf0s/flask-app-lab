@@ -1,5 +1,6 @@
-from flask import render_template, redirect, url_for, flash, request, session
+from flask import render_template, redirect, url_for, flash, request
 from app import db
+from app.users.models import User
 from . import post_bp
 from .models import Post
 from .forms import PostForm
@@ -19,19 +20,21 @@ def list_posts():
 @post_bp.route("/create", methods=["GET", "POST"])
 def create_post():
     form = PostForm()
+    authors = db.session.scalars(db.select(User).order_by(User.id)).all()
+    form.author_id.choices = [(author.id, author.username) for author in authors]
+
     if form.validate_on_submit():
-        author_name = session.get("username") or "Anonymous"
         new_post = Post(
             title=form.title.data.strip(),
             content=form.content.data.strip(),
             is_active=form.is_active.data,
             posted=form.publish_date.data,
             category=form.category.data,
-            author=author_name
+            user_id=form.author_id.data
         )
         db.session.add(new_post)
         db.session.commit()
-        flash(f"Пост успішно створено! Автор: {author_name}.", "success")
+        flash("Пост успішно створено!", "success")
         return redirect(url_for("posts.list_posts"))
     elif request.method == "POST":
         flash("Помилка валідації. Перевірте заповнені поля.", "danger")
@@ -49,12 +52,19 @@ def detail_post(id: int):
 def update_post(id: int):
     post = db.get_or_404(Post, id)
     form = PostForm(obj=post)
+    authors = db.session.scalars(db.select(User).order_by(User.id)).all()
+    form.author_id.choices = [(author.id, author.username) for author in authors]
 
     if request.method == "GET":
         form.publish_date.data = post.posted
+        form.author_id.data = post.user_id
 
     if form.validate_on_submit():
-        form.populate_obj(post)
+        post.title = form.title.data.strip()
+        post.content = form.content.data.strip()
+        post.is_active = form.is_active.data
+        post.category = form.category.data
+        post.user_id = form.author_id.data
         if form.publish_date.data:
             post.posted = form.publish_date.data
         db.session.commit()

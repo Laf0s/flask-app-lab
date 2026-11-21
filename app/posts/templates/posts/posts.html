@@ -48,7 +48,7 @@
 
                     <div class="card-body p-4 d-flex flex-column">
                         <div class="post-meta mb-2 d-flex justify-content-between">
-                            <span><i class="bi bi-person me-1"></i>{{ post.author }}</span>
+                            <span><i class="bi bi-person me-1"></i>{{ post.user.username }}</span>
                             <span><i class="bi bi-calendar3 me-1"></i>{{ post.posted.strftime('%d.%m.%Y %H:%M') if post.posted else '' }}</span>
                         </div>
 
