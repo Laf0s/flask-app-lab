@@ -1,160 +1,119 @@
+import os
 import unittest
-from datetime import datetime, timezone
-from app import create_app, db
-from app.posts.models import Post
+import warnings
+from unittest.mock import patch
+from app import create_app
+from app.products.repository import get_db, create_product
+
+TEST_DB_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "data", "test_products.json")
+)
 
 
-class PostTestCase(unittest.TestCase):
+class ProductBlueprintTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        warnings.filterwarnings("ignore", category=ResourceWarning)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+        cls.patcher = patch("app.products.repository.DB_PATH", TEST_DB_PATH)
+        cls.patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.patcher.stop()
+        if os.path.exists(TEST_DB_PATH):
+            try:
+                os.remove(TEST_DB_PATH)
+            except OSError:
+                pass
 
     def setUp(self):
         self.app = create_app("test")
         self.client = self.app.test_client()
 
-        with self.app.app_context():
-            db.create_all()
+        db = get_db()
+        db.truncate()
+        db.close()
+
+        self.test_product_id = create_product({
+            "name": "Ноутбук Lenovo IdeaPad",
+            "content": "Швидкий ноутбук для навчання та роботи з 16 ГБ RAM.",
+            "price": "650.00",
+            "category": "computers",
+            "quantity": "7"
+        })
 
     def tearDown(self):
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
+        db = get_db()
+        db.truncate()
+        db.close()
 
-    def test_create_post(self):
-        with self.client.session_transaction() as sess:
-            sess["username"] = "andrii"
-
-        response = self.client.post("/posts/create", data={
-            "title": "My first post",
-            "content": "This is TDD in Flask!",
-            "is_active": "y",
-            "publish_date": "2026-11-15T14:00",
-            "category": "tech"
-        }, follow_redirects=True)
-
+    def test_products_list_page(self):
+        response = self.client.get("/products/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Пост успішно створено".encode("utf-8"), response.data)
+        self.assertIn("Ноутбук Lenovo IdeaPad".encode("utf-8"), response.data)
+        self.assertIn(b"650.00", response.data)
 
-        with self.app.app_context():
-            post = db.session.scalar(db.select(Post).where(Post.title == "My first post"))
-            self.assertIsNotNone(post)
-            self.assertEqual(post.content, "This is TDD in Flask!")
-            self.assertEqual(post.author, "andrii")
-            self.assertEqual(post.category, "tech")
-            self.assertTrue(post.is_active)
-
-    def test_create_post_anonymous_and_validation(self):
-        bad_resp = self.client.post("/posts/create", data={
-            "title": "A",
-            "content": "Text",
-            "category": "news"
-        })
-        self.assertEqual(bad_resp.status_code, 200)
-        with self.app.app_context():
-            self.assertEqual(db.session.scalar(db.select(db.func.count(Post.id))), 0)
-
-        good_resp = self.client.post("/posts/create", data={
-            "title": "Anonymous Post",
-            "content": "Content from guest",
-            "is_active": "y",
-            "publish_date": "2026-11-15T14:30",
-            "category": "news"
-        }, follow_redirects=True)
-        self.assertEqual(good_resp.status_code, 200)
-        with self.app.app_context():
-            post = db.session.scalar(db.select(Post).where(Post.title == "Anonymous Post"))
-            self.assertEqual(post.author, "Anonymous")
-
-    def test_list_posts(self):
-        with self.app.app_context():
-            p_old = Post(
-                title="Older Post",
-                content="Old text",
-                posted=datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc),
-                category="news",
-                is_active=True
-            )
-            p_new = Post(
-                title="Newer Post",
-                content="New text",
-                posted=datetime(2026, 11, 15, 10, 0, tzinfo=timezone.utc),
-                category="tech",
-                is_active=True
-            )
-            p_hidden = Post(
-                title="Hidden Post",
-                content="Secret",
-                category="other",
-                is_active=False
-            )
-            db.session.add_all([p_old, p_new, p_hidden])
-            db.session.commit()
-
-        response = self.client.get("/posts")
-        html = response.get_data(as_text=True)
+    def test_product_detail_page(self):
+        response = self.client.get(f"/products/{self.test_product_id}")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Newer Post", html)
-        self.assertIn("Older Post", html)
-        self.assertNotIn("Hidden Post", html)
-        self.assertLess(html.index("Newer Post"), html.index("Older Post"))
+        self.assertIn("Ноутбук Lenovo IdeaPad".encode("utf-8"), response.data)
+        self.assertIn("Швидкий ноутбук для навчання".encode("utf-8"), response.data)
 
-    def test_view_post_detail(self):
-        with self.app.app_context():
-            post = Post(title="Detail Title", content="Full detailed content", category="publication", author="student")
-            db.session.add(post)
-            db.session.commit()
-            post_id = post.id
-
-        response = self.client.get(f"/posts/{post_id}")
-        html = response.get_data(as_text=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Detail Title", html)
-        self.assertIn("Full detailed content", html)
-        self.assertIn("student", html)
-
-    def test_update_post(self):
-        with self.app.app_context():
-            post = Post(title="Initial Title", content="Initial content", category="other", is_active=True)
-            db.session.add(post)
-            db.session.commit()
-            post_id = post.id
-
-        response = self.client.post(f"/posts/{post_id}/update", data={
-            "title": "Updated Title",
-            "content": "Updated content",
-            "is_active": "y",
-            "publish_date": "2026-11-15T15:00",
-            "category": "tech"
-        }, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Пост оновлено".encode("utf-8"), response.data)
-
-        with self.app.app_context():
-            updated = db.session.get(Post, post_id)
-            self.assertEqual(updated.title, "Updated Title")
-            self.assertEqual(updated.content, "Updated content")
-            self.assertEqual(updated.category, "tech")
-
-    def test_delete_post(self):
-        with self.app.app_context():
-            post = Post(title="Post to Delete", content="Will be removed", category="news")
-            db.session.add(post)
-            db.session.commit()
-            post_id = post.id
-
-        get_resp = self.client.get(f"/posts/{post_id}/delete")
-        self.assertEqual(get_resp.status_code, 200)
-        self.assertIn("Post to Delete".encode("utf-8"), get_resp.data)
-
-        post_resp = self.client.post(f"/posts/{post_id}/delete", follow_redirects=True)
-        self.assertEqual(post_resp.status_code, 200)
-        self.assertIn("Пост видалено".encode("utf-8"), post_resp.data)
-
-        with self.app.app_context():
-            self.assertIsNone(db.session.get(Post, post_id))
-
-    def test_404_not_found(self):
-        response = self.client.get("/posts/99999")
+    def test_product_not_found(self):
+        response = self.client.get("/products/99999")
         self.assertEqual(response.status_code, 404)
+
+    def test_create_product_success(self):
+        data = {
+            "name": "Миша Бездротова",
+            "content": "Оптична бездротова миша з підтримкою Bluetooth 5.0.",
+            "price": "29.99",
+            "category": "peripherals",
+            "quantity": "15"
+        }
+        response = self.client.post("/products/add", data=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Миша Бездротова".encode("utf-8"), response.data)
+
+    def test_create_product_validation_error(self):
+        data = {
+            "name": "AB",
+            "content": "Опис",
+            "price": "10.00",
+            "category": "electronics",
+            "quantity": "2"
+        }
+        response = self.client.post("/products/add", data=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Мінімум 3 символи".encode("utf-8"), response.data)
+
+    def test_update_product_success(self):
+        update_data = {
+            "name": "Оновлений Ноутбук Pro",
+            "content": "Оновлений опис товару після модернізації.",
+            "price": "799.50",
+            "category": "computers",
+            "quantity": "4"
+        }
+        response = self.client.post(
+            f"/products/{self.test_product_id}/edit",
+            data=update_data,
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Оновлений Ноутбук Pro".encode("utf-8"), response.data)
+        self.assertIn(b"799.50", response.data)
+
+    def test_delete_product_success(self):
+        response = self.client.post(
+            f"/products/{self.test_product_id}/delete",
+            follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Ноутбук Lenovo IdeaPad".encode("utf-8"), response.data)
 
 
 if __name__ == "__main__":
