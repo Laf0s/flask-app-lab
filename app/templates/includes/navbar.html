@@ -13,10 +13,10 @@
       <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav me-auto align-items-lg-center">
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'home' %}active fw-semibold{% endif %}" href="{{ url_for('main.home') }}">Головна</a>
+            <a class="nav-link {% if request.endpoint == 'main.home' %}active fw-semibold{% endif %}" href="{{ url_for('main.home') }}">Головна</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'resume' %}active fw-semibold{% endif %}" href="{{ url_for('main.resume') }}">Резюме</a>
+            <a class="nav-link {% if request.endpoint == 'main.resume' %}active fw-semibold{% endif %}" href="{{ url_for('main.resume') }}">Резюме</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'posts.list_posts' %}active fw-semibold{% endif %}" href="{{ url_for('posts.list_posts') }}">Пости</a>
@@ -25,15 +25,18 @@
             <a class="nav-link {% if request.endpoint == 'products.list_products' %}active fw-semibold{% endif %}" href="{{ url_for('products.list_products') }}">Продукти</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'contacts' %}active fw-semibold{% endif %}" href="{{ url_for('main.contacts') }}">Контакти</a>
+            <a class="nav-link {% if request.endpoint == 'users.users_list' %}active fw-semibold{% endif %}" href="{{ url_for('users.users_list') }}">Користувачі</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'main.contacts' %}active fw-semibold{% endif %}" href="{{ url_for('main.contacts') }}">Контакти</a>
           </li>
         </ul>
 
         <ul class="navbar-nav ms-auto align-items-lg-center gap-2 mt-2 mt-lg-0">
           {% if session.get('username') %}
             <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'users.profile' %}active fw-semibold text-info{% endif %}" href="{{ url_for('users.profile') }}">
-                <i class="bi bi-person-circle me-1"></i> Профіль ({{ session.get('username') }})
+              <a class="nav-link {% if request.endpoint == 'users.account' %}active fw-semibold text-info{% endif %}" href="{{ url_for('users.account') }}">
+                <i class="bi bi-person-circle me-1"></i> Account ({{ session.get('username') }})
               </a>
             </li>
             <li class="nav-item">
@@ -45,6 +48,11 @@
             <li class="nav-item">
               <a class="btn btn-outline-light btn-sm rounded-pill px-3 {% if request.endpoint == 'users.login' %}active{% endif %}" href="{{ url_for('users.login') }}">
                 <i class="bi bi-box-arrow-in-right me-1"></i> Вхід
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary btn-sm rounded-pill px-3 {% if request.endpoint == 'users.register' %}active{% endif %}" href="{{ url_for('users.register') }}">
+                Реєстрація
               </a>
             </li>
           {% endif %}

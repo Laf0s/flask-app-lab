@@ -1,15 +1,13 @@
 from flask import request, render_template, redirect, url_for, flash, session, make_response
+from app import db
 from . import users_bp
+from .models import User
+from .forms import RegistrationForm, LoginForm
 
-USERS_DATA = {
-    "user1": "password123",
-    "admin": "admin123"
-}
 @users_bp.route("/hi/<string:name>")
 def greetings(name):
     name = name.upper()
     age = request.args.get("age", None, int)
-
     return render_template("hi.html", name=name, age=age)
 
 
@@ -18,24 +16,68 @@ def admin():
     to_url = url_for("users.greetings", name="administrator", age=45, _external=True)
     return redirect(to_url)
 
+
+@users_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if "username" in session:
+        return redirect(url_for("users.account"))
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(
+            username=form.username.data.strip(),
+            email=form.email.data.strip().lower(),
+            password=""
+        )
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Account created for {user.username}!", "success")
+        return redirect(url_for("users.login"))
+
+    return render_template("register.html", form=form, title="Register")
+
+
 @users_bp.route("/login", methods=["GET", "POST"])
 def login():
     if "username" in session:
-        return redirect(url_for("users.profile"))
+        return redirect(url_for("users.account"))
 
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data.strip().lower()
+        password = form.password.data
+        user = db.session.scalar(db.select(User).where(User.email == email))
 
-        if username in USERS_DATA and USERS_DATA[username] == password:
-            session["username"] = username
-            flash("Успішний вхід!", "success")
-            return redirect(url_for("users.profile"))
+        if user and user.check_password(password):
+            session["username"] = user.username
+            session["email"] = user.email
+            flash(f"Вітаю, {user.username}! Вхід успішний.", "success")
+            return redirect(url_for("users.account"))
         else:
-            flash("Wrong data! Try again!", "danger")
-            return redirect(url_for("users.login"))
+            flash("Невірний email або пароль! Спробуйте ще раз.", "danger")
 
-    return render_template("login.html")
+    return render_template("login.html", form=form, title="Login")
+
+
+@users_bp.route("/account")
+def account():
+    if "username" not in session:
+        flash("Доступ заборонено. Будь ласка, авторизуйтесь.", "warning")
+        return redirect(url_for("users.login"))
+
+    return render_template(
+        "account.html",
+        username=session.get("username"),
+        email=session.get("email")
+    )
+
+
+@users_bp.route("/list")
+def users_list():
+    users = db.session.scalars(db.select(User).order_by(User.id)).all()
+    return render_template("users_list.html", users=users)
+
 
 @users_bp.route("/profile")
 def profile():
@@ -44,7 +86,6 @@ def profile():
         return redirect(url_for("users.login"))
 
     current_theme = request.cookies.get("profile_theme", "light")
-
     return render_template(
         "profile.html",
         username=session["username"],
@@ -55,6 +96,7 @@ def profile():
 @users_bp.route("/logout")
 def logout():
     session.pop("username", None)
+    session.pop("email", None)
     flash("Ви вийшли із системи.", "info")
     return redirect(url_for("users.login"))
 

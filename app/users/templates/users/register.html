@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "includes/_formhelpers.html" import render_field %}
+
+{% block title %}Register | Flask Auth{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-12 col-sm-9 col-md-7 col-lg-5">
+    <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+      <h2 class="text-center text-secondary fw-normal mb-4">Register</h2>
+
+      <form method="POST" action="{{ url_for('users.register') }}" novalidate>
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.username) }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.confirm_password) }}
+
+        <div class="d-grid mt-4">
+          {{ form.submit(class="btn btn-success py-2 fw-semibold") }}
+        </div>
+      </form>
+
+      <div class="text-center mt-3 small text-muted">
+        Вже маєте акаунт? <a href="{{ url_for('users.login') }}" class="text-decoration-none">Увійти</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
