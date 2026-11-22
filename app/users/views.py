@@ -1,4 +1,5 @@
-from flask import request, render_template, redirect, url_for, flash, session, make_response
+from flask import request, render_template, redirect, url_for, flash, make_response
+from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from . import users_bp
 from .models import User
@@ -19,7 +20,7 @@ def admin():
 
 @users_bp.route("/register", methods=["GET", "POST"])
 def register():
-    if "username" in session:
+    if current_user.is_authenticated:
         return redirect(url_for("users.account"))
 
     form = RegistrationForm()
@@ -40,7 +41,7 @@ def register():
 
 @users_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if "username" in session:
+    if current_user.is_authenticated:
         return redirect(url_for("users.account"))
 
     form = LoginForm()
@@ -50,9 +51,8 @@ def login():
         user = db.session.scalar(db.select(User).where(User.email == email))
 
         if user and user.check_password(password):
-            session["username"] = user.username
-            session["email"] = user.email
-            flash(f"Вітаю, {user.username}! Вхід успішний.", "success")
+            login_user(user, remember=form.remember.data)
+            flash("You logged in successfully!", "success")
             return redirect(url_for("users.account"))
         else:
             flash("Невірний email або пароль! Спробуйте ще раз.", "danger")
@@ -61,51 +61,39 @@ def login():
 
 
 @users_bp.route("/account")
+@login_required
 def account():
-    if "username" not in session:
-        flash("Доступ заборонено. Будь ласка, авторизуйтесь.", "warning")
-        return redirect(url_for("users.login"))
-
-    return render_template(
-        "account.html",
-        username=session.get("username"),
-        email=session.get("email")
-    )
+    return render_template("account.html", user=current_user)
 
 
 @users_bp.route("/list")
+@login_required
 def users_list():
     users = db.session.scalars(db.select(User).order_by(User.id)).all()
     return render_template("users_list.html", users=users)
 
 
 @users_bp.route("/profile")
+@login_required
 def profile():
-    if "username" not in session:
-        flash("Доступ заборонено. Будь ласка, авторизуйтесь.", "danger")
-        return redirect(url_for("users.login"))
-
     current_theme = request.cookies.get("profile_theme", "light")
     return render_template(
         "profile.html",
-        username=session["username"],
+        username=current_user.username,
         cookies=request.cookies,
         theme=current_theme
     )
 
 @users_bp.route("/logout")
+@login_required
 def logout():
-    session.pop("username", None)
-    session.pop("email", None)
-    flash("Ви вийшли із системи.", "info")
+    logout_user()
+    flash("You have successfully logged out.", "info")
     return redirect(url_for("users.login"))
 
 @users_bp.route("/cookie/add", methods=["POST"])
+@login_required
 def add_cookie():
-    if "username" not in session:
-        flash("Дія дозволена лише авторизованим користувачам.", "danger")
-        return redirect(url_for("users.login"))
-
     key = request.form.get("key", "").strip()
     val = request.form.get("val", "").strip()
     max_age = request.form.get("max_age", "").strip()
@@ -125,11 +113,8 @@ def add_cookie():
     return resp
 
 @users_bp.route("/cookie/delete-by-key", methods=["POST"])
+@login_required
 def delete_cookie_by_key():
-    if "username" not in session:
-        flash("Дія дозволена лише авторизованим користувачам.", "danger")
-        return redirect(url_for("users.login"))
-
     key = request.form.get("key_to_delete", "").strip()
     if not key:
         flash("Вкажіть ключ куки для видалення!", "warning")
@@ -145,20 +130,18 @@ def delete_cookie_by_key():
     return resp
 
 @users_bp.route("/cookie/delete-all", methods=["POST"])
+@login_required
 def delete_all_cookies():
-    if "username" not in session:
-        flash("Дія дозволена лише авторизованим користувачам.", "danger")
-        return redirect(url_for("users.login"))
-
     resp = make_response(redirect(url_for("users.profile")))
     for key in request.cookies:
-        if key != "session":
+        if key not in ("session", "remember_token"):
             resp.delete_cookie(key)
 
     flash("Всі користувацькі кукі видалено!", "info")
     return resp
 
 @users_bp.route("/theme/<string:theme_name>")
+@login_required
 def set_theme(theme_name):
     allowed_themes = ["light", "dark"]
     selected = theme_name if theme_name in allowed_themes else "light"

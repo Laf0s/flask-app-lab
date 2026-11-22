@@ -24,19 +24,21 @@
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'products.list_products' %}active fw-semibold{% endif %}" href="{{ url_for('products.list_products') }}">Продукти</a>
           </li>
+          {% if current_user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'users.users_list' %}active fw-semibold{% endif %}" href="{{ url_for('users.users_list') }}">Користувачі</a>
           </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'main.contacts' %}active fw-semibold{% endif %}" href="{{ url_for('main.contacts') }}">Контакти</a>
           </li>
         </ul>
 
         <ul class="navbar-nav ms-auto align-items-lg-center gap-2 mt-2 mt-lg-0">
-          {% if session.get('username') %}
+          {% if current_user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link {% if request.endpoint == 'users.account' %}active fw-semibold text-info{% endif %}" href="{{ url_for('users.account') }}">
-                <i class="bi bi-person-circle me-1"></i> Account ({{ session.get('username') }})
+                <i class="bi bi-person-circle me-1"></i> Account ({{ current_user.username }})
               </a>
             </li>
             <li class="nav-item">

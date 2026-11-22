@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 from sqlalchemy.orm import DeclarativeBase
 from dotenv import load_dotenv
 from .config import config_map
@@ -24,6 +25,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 bcrypt = Bcrypt()
+login_manager = LoginManager()
 
 
 def create_app(config_name: str = None) -> Flask:
@@ -37,6 +39,11 @@ def create_app(config_name: str = None) -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
+    login_manager.init_app(app)
+
+    login_manager.login_view = "users.login"
+    login_manager.login_message = "Будь ласка, увійдіть, щоб отримати доступ до цієї сторінки."
+    login_manager.login_message_category = "warning"
 
     with app.app_context():
         from .views import main as main_blueprint
