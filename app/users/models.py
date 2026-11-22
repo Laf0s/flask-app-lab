@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app import db
+from app import db, bcrypt
 
 if TYPE_CHECKING:
     from app.posts.models import Post
@@ -18,6 +18,12 @@ class User(db.Model):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+    def set_password(self, raw_password: str) -> None:
+        self.password = bcrypt.generate_password_hash(raw_password).decode("utf-8")
+
+    def check_password(self, raw_password: str) -> bool:
+        return bcrypt.check_password_hash(self.password, raw_password)
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, username={self.username!r}, email={self.email!r})>"

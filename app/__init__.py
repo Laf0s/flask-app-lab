@@ -6,6 +6,7 @@ from sqlalchemy.orm import DeclarativeBase
 from dotenv import load_dotenv
 from .config import config_map
 from sqlalchemy import MetaData
+from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
+bcrypt = Bcrypt()
 
 
 def create_app(config_name: str = None) -> Flask:
@@ -34,6 +36,7 @@ def create_app(config_name: str = None) -> Flask:
 
     db.init_app(app)
     migrate.init_app(app, db)
+    bcrypt.init_app(app)
 
     with app.app_context():
         from .views import main as main_blueprint
